@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#FDFBF7] text-[#1E1B18] font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom Scrollbar for POS Kiosk & Desktop */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF3E7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DFB870;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C68A4C;
+}
+
+/* 80mm Thermal Receipt Printing Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #thermal-receipt-print-area,
+  #thermal-receipt-print-area * {
+    visibility: visible;
+  }
+
+  #thermal-receipt-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm !important;
+    max-width: 80mm !important;
+    padding: 2mm !important;
+    margin: 0 !important;
+    font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+}
+
+/* Touch Kiosk Button Active Animations */
+.kiosk-btn {
+  @apply transition-all duration-150 active:scale-95 select-none;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #DFB870 0%, #C68A4C 50%, #B45309 100%);
+}
+
+.gold-text-gradient {
+  background: linear-gradient(135deg, #B45309 0%, #C68A4C 50%, #92400E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

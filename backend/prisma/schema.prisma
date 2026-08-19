@@ -1,0 +1,74 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  WORKER
+}
+
+enum PaymentMode {
+  CASH
+  UPI
+  CARD
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String   // Hashed via bcrypt (min 8 chars)
+  name      String
+  role      Role     @default(WORKER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  orders    Order[]  @relation("CashierOrders")
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  items Item[]
+}
+
+model Item {
+  id         Int         @id @default(autoincrement())
+  name       String
+  categoryId Int
+  category   Category    @relation(fields: [categoryId], references: [id])
+  price      Decimal     @db.Decimal(10, 2)
+  unit       String      // scoop, piece, glass
+  stock      Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  orderItems OrderItem[]
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  orderNumber String      @unique // e.g., #ORD-1042
+  cashierId   String
+  cashier     User        @relation("CashierOrders", fields: [cashierId], references: [id])
+  subtotal    Decimal     @db.Decimal(10, 2)
+  tax         Decimal     @db.Decimal(10, 2)
+  total       Decimal     @db.Decimal(10, 2)
+  paymentMode PaymentMode
+  createdAt   DateTime    @default(now()) // Indexed for monthly/yearly reports
+  items       OrderItem[]
+
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  itemId    Int
+  item      Item    @relation(fields: [itemId], references: [id])
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+}

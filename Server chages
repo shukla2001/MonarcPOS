@@ -1,0 +1,46 @@
+[1mdiff --git a/backend/src/server.ts b/backend/src/server.ts[m
+[1mindex 1f61cb1..763c88a 100644[m
+[1m--- a/backend/src/server.ts[m
+[1m+++ b/backend/src/server.ts[m
+[36m@@ -6,32 +6,25 @@[m [mconst PORT = process.env.PORT || 5000;[m
+ const wait = (milliseconds: number) =>[m
+   new Promise((resolve) => setTimeout(resolve, milliseconds));[m
+ [m
+[31m-const startServer = async () => {[m
+[32m+[m[32mconst connectToDatabase = async () => {[m
+   for (let attempt = 1; attempt <= 5; attempt += 1) {[m
+     try {[m
+       await prisma.$connect();[m
+       console.log('✅ PostgreSQL / Prisma Database connected successfully.');[m
+[31m-      break;[m
+[32m+[m[32m      return;[m
+     } catch (error) {[m
+       console.error(`❌ Database connection attempt ${attempt}/5 failed:`, error);[m
+ [m
+[31m-      if (attempt === 5) {[m
+[31m-        process.exit(1);[m
+[31m-      }[m
+[32m+[m[32m      if (attempt === 5) return;[m
+ [m
+       await wait(attempt * 2000);[m
+     }[m
+   }[m
+[31m-[m
+[31m-  try {[m
+[31m-    app.listen(PORT, () => {[m
+[31m-      console.log(`🚀 Monarc Ice Creams POS & Admin API running on http://localhost:${PORT}`);[m
+[31m-      console.log(`🍦 Target Production Host: admin.monarcicecreams.com`);[m
+[31m-    });[m
+[31m-  } catch (error) {[m
+[31m-    console.error('❌ Failed to start server:', error);[m
+[31m-    process.exit(1);[m
+[31m-  }[m
+ };[m
+ [m
+[31m-startServer();[m
+[32m+[m[32mapp.listen(PORT, () => {[m
+[32m+[m[32m  console.log(`🚀 Monarc Ice Creams POS & Admin API running on http://localhost:${PORT}`);[m
+[32m+[m[32m  console.log(`🍦 Target Production Host: admin.monarcicecreams.com`);[m
+[32m+[m[32m  void connectToDatabase();[m
+[32m+[m[32m});[m
+[41m+[m
